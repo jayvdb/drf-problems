@@ -13,12 +13,16 @@ from drf_problems.utils import register
 logger = logging.getLogger('drf_problems')
 
 
+class Combined404(exceptions.NotFound, Http404):
+    pass
+
+
 def exception_handler(exc, context):
     # Convert Django exceptions (from DRF).
     if isinstance(exc, Http404):
-        exc = exceptions.NotFound()
+        exc = Combined404(exc)
     elif isinstance(exc, PermissionDenied):
-        exc = exceptions.PermissionDenied()
+        exc = exceptions.PermissionDenied(exc)
     elif not isinstance(exc, exceptions.APIException):
         # Fallback handler to convert remaining exceptions to API exception.
         logger.exception(exc)
