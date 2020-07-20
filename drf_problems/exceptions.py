@@ -25,7 +25,7 @@ def exception_handler(exc, context):
         exc = exceptions.PermissionDenied(exc)
     elif not isinstance(exc, exceptions.APIException):
         # Fallback handler to convert remaining exceptions to API exception.
-        logger.exception(exc)
+        logger.exception('{!r}'.format(exc), exc_info=True)
         exc = exceptions.APIException(exc)
 
     request = context['request']
