@@ -1,5 +1,4 @@
 flake8
 pytest-djangoapp
-pytest-drf
 pytest-mock
 https://github.com/PromyLOPh/should_be/archive/cpython3.8.zip

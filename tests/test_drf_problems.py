@@ -11,7 +11,7 @@ from rest_framework.mixins import Response
 from drf_problems.exceptions import exception_handler
 
 
-def test_exception_handler_if_error_without_detail(template_context, fake_urlconf):
+def test_exception_handler_if_error_without_detail(template_context, inject_app_urls):
     data = {"data": "test"}
     exp = APIException(data)
     response = exception_handler(exp, template_context())
@@ -31,7 +31,8 @@ def test_exception_handler_if_error_without_detail(template_context, fake_urlcon
 
     sorted(response.data.keys()).should_be(["data", "status", "title", "type"])
 
-def test_exception_handler_if_error_is_list_of_string(template_context, fake_urlconf):
+
+def test_exception_handler_if_error_is_list_of_string(template_context, inject_app_urls):
     exp = APIException(["testing error"])
     response = exception_handler(exp, template_context())
 
@@ -52,7 +53,8 @@ def test_exception_handler_if_error_is_list_of_string(template_context, fake_url
 
     sorted(response.data.keys()).should_be(["errors", "status", "title", "type"])
 
-def test_exception_handler_if_error_is_string(template_context, fake_urlconf):
+
+def test_exception_handler_if_error_is_string(template_context, inject_app_urls):
     exp = APIException("testing error")
     response = exception_handler(exp, template_context())
 
@@ -69,7 +71,7 @@ def test_exception_handler_if_error_is_string(template_context, fake_urlconf):
     sorted(response.data.keys()).should_be(["detail", "status", "title", "type"])
 
 
-def test_exception_handler_if_error_is_nested_dict(template_context, fake_urlconf):
+def test_exception_handler_if_error_is_nested_dict(template_context, inject_app_urls):
     exp = ValidationError({"foo": {"bar": "testing error"}})
     response = exception_handler(exp, template_context())
 
@@ -92,7 +94,7 @@ def test_exception_handler_if_error_is_nested_dict(template_context, fake_urlcon
     sorted(response.data.keys()).should_be(["foo", "status", "title", "type"])
 
 
-def test_exception_handler_if_error_is_common(template_context, fake_urlconf):
+def test_exception_handler_if_error_is_common(template_context, inject_app_urls):
     exp = APIException({"non_field_errors": "test"})
     response = exception_handler(exp, template_context())
 
@@ -109,7 +111,7 @@ def test_exception_handler_if_error_is_common(template_context, fake_urlconf):
     sorted(response.data.keys()).should_be(["non_field_errors", "status", "title", "type"])
 
 
-def test_handle_exception_with_basic_exception_ok(rf, view, fake_urlconf):
+def test_handle_exception_with_basic_exception_ok(rf, view, inject_app_urls):
     view.request = rf.get("")
     view.request.data = {}
     response = view.handle_exception(APIException("test"))
@@ -130,7 +132,7 @@ def test_handle_exception_with_basic_exception_ok(rf, view, fake_urlconf):
     sorted(response.data.keys()).should_be(["detail", "status", "title", "type"])
 
 
-def test_handle_exception_with_not_auth_exception_ok(rf, view, fake_urlconf):
+def test_handle_exception_with_not_auth_exception_ok(rf, view, inject_app_urls):
     view.request = rf.get("")
     view.request.data = {}
     response = view.handle_exception(NotAuthenticated("test"))
@@ -152,7 +154,7 @@ def test_handle_exception_with_not_auth_exception_ok(rf, view, fake_urlconf):
     sorted(response.data.keys()).should_be(["detail", "status", "title", "type"])
 
 
-def test_handle_exception_with_auth_headers_ok(mocker, rf, view, fake_urlconf):
+def test_handle_exception_with_auth_headers_ok(mocker, rf, view, inject_app_urls):
     view.request = rf.get("")
     view.request.data = {}
     mocker.patch.object(view, "get_authenticate_header", return_value=True)
